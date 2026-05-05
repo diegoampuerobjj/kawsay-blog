@@ -5,7 +5,7 @@ from users.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, max_length=100)
+    slug = models.SlugField(unique=True, max_length=100, blank=True)
     description = models.CharField(max_length=300)
     created_at = models.DateField(auto_now_add=True)
 
@@ -17,17 +17,18 @@ class Category(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        """The save override is here to auto-fill slug fields so you do not have to type them every time."""
+        # The save override is here to auto-fill slug fields so you do not have to type them every time.
         if not self.slug:
             self.slug = slugify(self.name)
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name= "posts")
     title = models.CharField(max_length=100)
+    featured_image = models.ImageField(upload_to="posts/featured/", blank=True, null=True)
     tags = models.ManyToManyField("Tag", related_name="posts", blank=True)
-    slug = models.SlugField(unique=True, max_length=100)
+    slug = models.SlugField(unique=True, max_length=100, blank=True)
     excerpt = models.CharField(max_length=300)
     content = models.TextField()
     published_at = models.DateField(null=True, blank=True)
@@ -78,13 +79,13 @@ class Like(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, max_length=100)
+    slug = models.SlugField(unique=True, max_length=100, blank=True)
 
     def __str__(self):
-        return self.title
+        return self.name
 
     def save(self, *args, **kwargs):
         # Auto-generate slug from name/title if it is empty, so editors do not need to fill it manually.
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = slugify(self.name)
         super().save(*args, **kwargs)
