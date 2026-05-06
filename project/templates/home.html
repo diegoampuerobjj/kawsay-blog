@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Kawsay{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to Kawsay</h1>
+        <p>Thoughts on music, life, books, web development, design, and everything in between. Just a man exploring the world.</p>
+        <div class="cta-buttons">
+            <a href="/blog/" class="btn btn-primary">Read My Posts</a>
+            {% if user.is_authenticated %}
+                {% comment %} <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a> {% endcomment %}
+                <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>{{ total_posts }}</h3>
+                <p>Articles</p>
+            </div>
+            <div class="stat-item">
+                <h3>10K+</h3>
+                <p>Readers</p>
+            </div>
+            <div class="stat-item">
+                <h3>5+</h3>
+                <p>Years</p>
+            </div>
+            <div class="stat-item">
+                <h3>100%</h3>
+                <p>Passion</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Posts Section -->
+    <section class="featured-section">
+        <h2 class="section-title">Latest Articles</h2>
+        <div class="posts-grid">
+            {% for post in posts|slice:":3" %}
+            <article class="post-card">
+                <img class="post-image" src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                <div class="post-content">
+                    <p class="post-date">{{post.published_at}}</p>
+                    <h3 class="post-title">{{post.title}}</h3>
+                    <p class="post-excerpt">{{post.excerpt}}</p>
+                    <a href="#" class="read-more">Read</a>
+                </div>
+            </article>
+            {% empty %}
+                <p>No posts yet.</p>
+            {% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/blog/" class="btn btn-secondary">View All Articles</a>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter">
+        <h2>Stay Updated</h2>
+        <p>Subscribe to get the latest articles delivered to your inbox.</p>
+        <form class="newsletter-form">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit">Subscribe</button>
+        </form>
+    </section>
+{% endblock %}
