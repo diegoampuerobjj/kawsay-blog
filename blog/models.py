@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
+from django.conf import settings
 
-from accounts.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -23,7 +23,7 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
 class Post(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name= "posts")
     title = models.CharField(max_length=100)
     featured_image = models.ImageField(upload_to="posts/featured/", blank=True, null=True)
@@ -50,7 +50,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comments")
     parent = models.ForeignKey("self", on_delete=models.CASCADE, related_name="replies")
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -68,7 +68,7 @@ class Comment(models.Model):
 
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="likes")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

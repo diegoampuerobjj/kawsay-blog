@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2>{% if form.instance.pk %}Edit Post{% else %}Create New Post{% endif %}</h2>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group mb-3">
+                    <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.title.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <div class="field-header">
+                        <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                        <a class="btn btn-sm btn-outline-primary" href="{% url 'create-category' %}?next={{ request.path }}">+ Add category</a>
+                    </div>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.category.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="{{ form.excerpt.id_for_label }}">{{ form.excerpt.label }}</label>
+                    {{ form.excerpt }}
+                    {% if form.excerpt.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.excerpt.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="{{ form.featured_image.id_for_label }}">{{ form.featured_image.label }}</label>
+                    {{ form.featured_image }}
+                    {% if form.featured_image.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.featured_image.errors }}
+                        </div>
+                    {% endif %}
+                    {% if form.instance.featured_image %}
+                        <div class="mt-2">
+                            <p>Current image:</p>
+                            <img src="{{ form.instance.featured_image.url }}" alt="Featured Image" style="max-width: 200px;">
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
+                    {{ form.content }}
+                    {% if form.content.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.content.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <div class="field-header">
+                        <label for="{{ form.tags.id_for_label }}">{{ form.tags.label }}</label>
+                        <a class="btn btn-sm btn-outline-primary" href="{% url 'create-tag' %}?next={{ request.path }}">+ Add tag</a>
+                    </div>
+                    {{ form.tags }}
+                    {% if form.tags.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.tags.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="{{ form.published_at.id_for_label }}">{{ form.published_at.label }}</label>
+                    {{ form.published_at }}
+                    {% if form.published_at.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.published_at.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        {% if form.instance.pk %}Update Post{% else %}Create Post{% endif %}
+                    </button>
+                    <a href="{% url 'blog-home' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
