@@ -7,7 +7,9 @@
             <h1>Blog Posts</h1>
         </div>
         <div>
-            <button class="btn btn-primary" disabled>Create New Post</button>
+            <a href="{% url 'create-post' %}">
+                <button class="btn btn-primary">Create New Post</button>
+            </a>
         </div>
     </div>
 
@@ -34,7 +36,7 @@
                         </div>
                     </div>
                     <div class="blog-card-footer">
-                        <a href="#" class="btn btn-sm btn-primary">Read More</a>
+                        <a href="{% url 'post-detail' post.slug %}" class="btn btn-sm btn-primary">Read More</a>
                     </div>
                 </article>
             {% endfor %}

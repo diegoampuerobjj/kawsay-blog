@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<article class="post-detail">
+  <header class="post-detail-header">
+    <a href="{% url 'blog-home' %}" class="post-detail-back-link">Back to blog</a>
+    <p class="post-detail-category">{{ post.category.name }}</p>
+    <h1 class="post-detail-title">{{ post.title }}</h1>
+    <p class="post-detail-excerpt">{{ post.excerpt }}</p>
+    <div class="post-detail-meta">
+      <span>By {{ post.author.username }}</span>
+      <span>
+        {% if post.published_at %}
+          Published {{ post.published_at }}
+        {% else %}
+          Created {{ post.created_at }}
+        {% endif %}
+      </span>
+    </div>
+  </header>
+
+  {% if post.featured_image %}
+    <figure class="post-detail-featured-image">
+      <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+    </figure>
+  {% endif %}
+
+  {% if post.tags.all %}
+    <div class="post-detail-tags" aria-label="Post tags">
+      {% for tag in post.tags.all %}
+        <span class="post-detail-tag">{{ tag.name }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <section class="post-detail-content">
+    {{ post.content|safe }}
+  </section>
+</article>
+
+{% endblock %}
