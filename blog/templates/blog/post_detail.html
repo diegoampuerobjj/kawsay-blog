@@ -39,4 +39,18 @@
   </section>
 </article>
 
+{% if user.is_authenticated and user == post.author %}
+  <div class="post-detail-actions" style="margin-top: 2rem; display: flex; gap: 1rem;">
+    <a href="{% url 'edit-post' post.slug %}" class="btn btn-primary">
+      Edit Post
+    </a>
+    <form method="POST" action="{% url 'delete-post' post.slug %}" style="display: inline;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">
+        Delete Post
+      </button>
+    </form>
+  </div>
+{% endif %}
+
 {% endblock %}

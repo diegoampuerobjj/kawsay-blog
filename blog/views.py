@@ -69,7 +69,7 @@ def update_post(request, slug):
             return redirect('post-detail', slug=post.slug)
     else:
         form = PostForm(instance=post)
-    return render(request, 'blog/post_detail.html', {'post': post})
+    return render(request, 'blog/post_form.html', {'form': form})
 
 #DELETE
 @login_required
