@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Category, Tag
+from .models import Post, Category, Tag, Comment
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -27,3 +27,15 @@ class TagForm(forms.ModelForm):
     class Meta:
         model = Tag
         fields = ['name']
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Share your thoughts...',
+                'class': 'form-control'
+            })
+        }

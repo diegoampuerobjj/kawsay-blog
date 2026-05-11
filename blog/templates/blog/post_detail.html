@@ -37,6 +37,70 @@
   <section class="post-detail-content">
     {{ post.content|safe }}
   </section>
+
+  <!-- Likes Section -->
+  <div class="post-detail-likes">
+    {% if user.is_authenticated %}
+      <a href="{% url 'toggle-like' post.slug %}" class="like-button {% if user_has_liked %}liked{% endif %}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="{% if user_has_liked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span class="like-count">{{ likes_count }}</span>
+      </a>
+    {% else %}
+      <div class="like-button-disabled">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span class="like-count">{{ likes_count }}</span>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Comments Section -->
+  <section class="post-detail-comments">
+    <h3 class="comments-title">Comments ({{ comments|length }})</h3>
+
+    {% if user.is_authenticated %}
+      <div class="comment-form-section">
+        <form method="post" class="comment-form">
+          {% csrf_token %}
+          <div class="form-group">
+            {{ form.content }}
+          </div>
+          <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+      </div>
+    {% else %}
+      <div class="comment-login-prompt">
+        <p><a href="{% url 'login' %}">Sign in</a> to leave a comment.</p>
+      </div>
+    {% endif %}
+
+    <!-- Comments List -->
+    {% if comments %}
+      <div class="comments-list">
+        {% for comment in comments %}
+          <div class="comment-item">
+            <div class="comment-header">
+              <span class="comment-author">{{ comment.user.username }}</span>
+              <span class="comment-date">{{ comment.created_at|timesince }} ago</span>
+              {% if user.is_authenticated and user == comment.user or user == post.author %}
+                <a href="{% url 'delete-comment' comment.id %}" class="comment-delete">Delete</a>
+              {% endif %}
+            </div>
+            <div class="comment-content">
+              {{ comment.content }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-comments">
+        <p>No comments yet. Be the first to share your thoughts!</p>
+      </div>
+    {% endif %}
+  </section>
 </article>
 
 {% if user.is_authenticated and user == post.author %}

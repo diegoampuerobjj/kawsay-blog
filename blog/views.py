@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Post
-from .forms import PostForm, CategoryForm, TagForm
+from django.http import JsonResponse
+from .models import Post, Like, Comment
+from .forms import PostForm, CategoryForm, TagForm, CommentForm
 
 #RENDER THE BLOG HOME
 def blog_home(request):
@@ -56,7 +57,32 @@ def create_tag(request):
 #READ
 def read_post(request, slug):
     post = get_object_or_404(Post, slug=slug)
-    return render(request, 'blog/post_detail.html', {'post': post})
+    comments = post.comments.filter(parent__isnull=True).order_by('-created_at')
+    user_has_liked = False
+    if request.user.is_authenticated:
+        user_has_liked = post.likes.filter(user=request.user).exists()
+    
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect('login')
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.user = request.user
+            comment.save()
+            return redirect('post-detail', slug=post.slug)
+    else:
+        form = CommentForm()
+    
+    context = {
+        'post': post,
+        'comments': comments,
+        'user_has_liked': user_has_liked,
+        'likes_count': post.likes.count(),
+        'form': form
+    }
+    return render(request, 'blog/post_detail.html', context)
 
 #UPDATE
 @login_required
@@ -79,3 +105,21 @@ def delete_post(request, slug):
         post.delete()
         return redirect('blog-home')
     return render(request, 'blog/post_confirm_delete.html', {'post', post})
+
+#LIKE
+@login_required
+def toggle_like(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+    like, created = post.likes.get_or_create(user=request.user)
+    if not created:
+        like.delete()
+    return redirect('post-detail', slug=post.slug)
+
+#COMMENT
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    post_slug = comment.post.slug
+    if request.user == comment.user or request.user == comment.post.author:
+        comment.delete()
+    return redirect('post-detail', slug=post_slug)
