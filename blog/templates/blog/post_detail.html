@@ -9,14 +9,29 @@
     <h1 class="post-detail-title">{{ post.title }}</h1>
     <p class="post-detail-excerpt">{{ post.excerpt }}</p>
     <div class="post-detail-meta">
-      <span>By {{ post.author.username }}</span>
-      <span>
-        {% if post.published_at %}
-          Published {{ post.published_at }}
-        {% else %}
-          Created {{ post.created_at }}
-        {% endif %}
-      </span>
+      <div>
+        <span>By {{ post.author.username }}</span>
+        <span>
+          {% if post.published_at %}
+            Published {{ post.published_at }}
+          {% else %}
+            Created {{ post.created_at }}
+          {% endif %}
+        </span>
+      </div>
+      {% if user.is_authenticated and user == post.author %}
+        <div class="post-detail-actions">
+          <a href="{% url 'edit-post' post.slug %}" class="btn btn-sm btn-outline-primary">
+            Edit
+          </a>
+          <form method="POST" action="{% url 'delete-post' post.slug %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+              Delete
+            </button>
+          </form>
+        </div>
+      {% endif %}
     </div>
   </header>
 
@@ -102,19 +117,5 @@
     {% endif %}
   </section>
 </article>
-
-{% if user.is_authenticated and user == post.author %}
-  <div class="post-detail-actions" style="margin-top: 2rem; display: flex; gap: 1rem;">
-    <a href="{% url 'edit-post' post.slug %}" class="btn btn-primary">
-      Edit Post
-    </a>
-    <form method="POST" action="{% url 'delete-post' post.slug %}" style="display: inline;">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">
-        Delete Post
-      </button>
-    </form>
-  </div>
-{% endif %}
 
 {% endblock %}
