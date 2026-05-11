@@ -1,4 +1,39 @@
-.venv
-pycache/
-*.pyc
+# Virtual Env
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Compiled python fiels
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# SQLite databases and logs
 db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+*.log
+
+# Sensible files and local data
+.env.local
+.env.production
+local_settings.py
+.secret_key.txt
+
+# Static files
+/media/
+/staticfiles/
+/static/
+
+# Cache and development tools
+.pytest_cache/
+.hypothesis/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/Copied!   
