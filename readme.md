@@ -44,6 +44,7 @@ This app provides a simple but complete blogging platform where:
 - SQLite (default development database)
 - Django templates + static CSS
 - Media file handling for uploaded images
+- Class-Based Views (migrated from Function-Based Views)
 
 ## Project structure
 
@@ -53,6 +54,7 @@ project/     # Django project settings, root urls, shared templates/static
 blog/        # Blog domain logic: models, views, forms, urls, templates
 accounts/    # Authentication and profile features
 media/       # Uploaded files (featured images)
+docs/        # Project documentation (views reference, migration logs)
 ```
 
 ## Core models
@@ -115,4 +117,6 @@ Open in browser:
 
 - No dependency lock file (`requirements.txt`, `pyproject.toml`, etc.) is currently present.
 - The default database is SQLite (`db.sqlite3`).
-- This README reflects the current implementation as of 11 May 2026.
+- All views use Django Class-Based Views (CBVs) instead of Function-Based Views (FBVs).
+- See `docs/views_reference.md` for detailed CBV documentation.
+- This README reflects the current implementation as of 14 May 2026.
