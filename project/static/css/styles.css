@@ -770,6 +770,18 @@ input[type="reset"]:hover {
 }
 
 /* ============================================
+   Utilities
+   ============================================ */
+
+.d-flex {
+    display: flex;
+}
+
+.gap-2 {
+    gap: 0.75rem;
+}
+
+/* ============================================
    Responsive Design
    ============================================ */
 
@@ -1232,6 +1244,105 @@ input[type="reset"]:hover {
 
     .post-detail-content {
         font-size: 1rem;
+    }
+}
+
+/* ============================================
+   Profile
+   ============================================ */
+
+.profile-layout {
+    display: flex;
+    gap: 3rem;
+    align-items: flex-start;
+}
+
+.profile-avatar-col {
+    flex-shrink: 0;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: block;
+}
+
+.profile-avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.profile-info-col {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: #000;
+}
+
+.profile-website {
+    margin-bottom: 1rem;
+}
+
+.profile-website a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.profile-website a:hover {
+    color: #000;
+}
+
+.profile-bio {
+    color: #555;
+    line-height: 1.7;
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-meta {
+    color: #999;
+    font-size: 0.9rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+.current-avatar {
+    margin-top: 1rem;
+}
+
+.current-avatar img {
+    max-width: 100px;
+    border-radius: 50%;
+    border: 2px solid #eee;
+}
+
+@media (max-width: 640px) {
+    .profile-layout {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .profile-info-col {
+        text-align: center;
     }
 }
 

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - Kawsay{% endblock %}
+
+{% block content %}
+<section class="auth-wrapper">
+    <div class="auth-card">
+        <h1 class="auth-title">Edit Profile</h1>
+        <p class="auth-subtitle">Update your personal information.</p>
+
+        <form method="POST" enctype="multipart/form-data" class="auth-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.display_name.id_for_label }}">Display name</label>
+                {{ form.display_name }}
+                {% if form.display_name.errors %}<p class="auth-error">{{ form.display_name.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.website.id_for_label }}">Website</label>
+                {{ form.website }}
+                {% if form.website.errors %}<p class="auth-error">{{ form.website.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.bio.id_for_label }}">Bio</label>
+                {{ form.bio }}
+                {% if form.bio.errors %}<p class="auth-error">{{ form.bio.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.avatar.id_for_label }}">Avatar</label>
+                {{ form.avatar }}
+                {% if form.avatar.errors %}<p class="auth-error">{{ form.avatar.errors.0 }}</p>{% endif %}
+                {% if form.instance.avatar %}
+                    <div class="current-avatar">
+                        <img src="{{ form.instance.avatar.url }}" alt="Current avatar">
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="auth-submit">Save Changes</button>
+        </form>
+
+        <div class="auth-links">
+            <a href="{% url 'profile' %}">Back to profile</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

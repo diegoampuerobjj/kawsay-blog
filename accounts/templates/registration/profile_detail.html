@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - Kawsay{% endblock %}
+
+{% block content %}
+<section class="blog-section">
+    <div class="blog-header">
+        <h1>Profile</h1>
+        <div class="post-detail-actions">
+            <a href="{% url 'profile-update' %}" class="btn btn-sm btn-outline-primary">Edit Profile</a>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="profile-layout">
+            <div class="profile-avatar-col">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="{{ profile.display_name }}" class="profile-avatar">
+                {% else %}
+                    <div class="profile-avatar-placeholder">
+                        {{ profile.display_name|default:profile.user.username|first|upper }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="profile-info-col">
+                <h2 class="profile-name">{{ profile.display_name|default:profile.user.username }}</h2>
+
+                {% if profile.website %}
+                    <p class="profile-website">
+                        <a href="{{ profile.website }}" target="_blank" rel="noopener">{{ profile.website }}</a>
+                    </p>
+                {% endif %}
+
+                {% if profile.bio %}
+                    <p class="profile-bio">{{ profile.bio }}</p>
+                {% endif %}
+
+                <div class="profile-meta">
+                    <span>Joined {{ profile.user.date_joined|date:"F Y" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

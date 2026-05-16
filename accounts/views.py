@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DetailView, UpdateView
+from .forms import RegisterForm, ProfileForm
+from .models import Profile
 
 def register(request):
     if request.method == 'POST':
@@ -21,3 +25,25 @@ def logout_view(request):
         return redirect('home')
     return redirect('home')
 
+
+
+
+#PROFILE READ
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = Profile
+    template_name = 'registration/profile_detail.html'
+
+    def get_object(self):
+        return self.request.user.profile
+
+#PROFILE UPDATE
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = Profile
+    form_class = ProfileForm
+    template_name = 'registration/profile_form.html'
+
+    def get_object(self):
+        return self.request.user.profile
+
+    def get_success_url(self):
+        return reverse("profile")
