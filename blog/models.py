@@ -5,13 +5,18 @@ from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, max_length=100, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
+    slug = models.SlugField(max_length=100, blank=True)
     description = models.CharField(max_length=300)
     created_at = models.DateField(auto_now_add=True)
 
     class Meta:
         verbose_name_plural = "Categories"
         ordering = ['name']
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'slug'], name='unique_user_category_slug'),
+            models.UniqueConstraint(fields=['user', 'name'], name='unique_user_category_name'),
+        ]
     
     def __str__(self):
         return self.name

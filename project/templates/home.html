@@ -54,7 +54,7 @@
                     <p class="post-date">{{post.published_at}}</p>
                     <h3 class="post-title">{{post.title}}</h3>
                     <p class="post-excerpt">{{post.excerpt}}</p>
-                    <a href="#" class="read-more">Read</a>
+                    <a href="{% url 'post-detail' post.slug %}" class="read-more">Read</a>
                 </div>
             </article>
             {% empty %}

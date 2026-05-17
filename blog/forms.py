@@ -14,7 +14,10 @@ class PostForm(forms.ModelForm):
         }
     
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        if user:
+            self.fields['category'].queryset = Category.objects.filter(user=user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
