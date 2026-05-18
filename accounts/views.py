@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, UpdateView
 from .forms import RegisterForm, ProfileForm
 from .models import Profile
+from blog.models import Post, Comment
 
 def register(request):
     if request.method == 'POST':
@@ -35,6 +36,14 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
     def get_object(self):
         return self.request.user.profile
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['user_posts'] = Post.objects.filter(author=user).order_by('-created_at')
+        context['comments'] = Comment.objects.filter(user=user).order_by('-created_at')[:10]
+        context['user_liked_posts'] = Post.objects.filter(likes__user=user).order_by('likes__created_at')
+        return context
 
 #PROFILE UPDATE
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):

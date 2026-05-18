@@ -8,6 +8,7 @@
         <h1>Profile</h1>
         <div class="post-detail-actions">
             <a href="{% url 'profile-update' %}" class="btn btn-sm btn-outline-primary">Edit Profile</a>
+            <a href="{% url 'password_change' %}" class="btn btn-sm btn-outline-primary">Change Password</a>
             <form method="POST" action="{% url 'logout' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm btn-danger">Logout</button>
@@ -46,5 +47,121 @@
             </div>
         </div>
     </div>
+
+    <div class="profile-tabs-container">
+        <div class="profile-tabs">
+            <button class="profile-tab active" data-tab="posts">My Posts ({{ user_posts|length }})</button>
+            <button class="profile-tab" data-tab="comments">Comments ({{ comments|length }})</button>
+            <button class="profile-tab" data-tab="liked">Liked Posts ({{ user_liked_posts|length }})</button>
+        </div>
+
+        <div class="profile-tab-content active" id="posts-tab">
+            {% if user_posts %}
+                <div class="profile-post-list">
+                    {% for post in user_posts %}
+                    <div class="profile-post-item">
+                        {% if post.featured_image %}
+                            <a href="{% url 'post-detail' post.slug %}" class="profile-post-image">
+                                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                            </a>
+                        {% else %}
+                            <div class="profile-post-image profile-post-image-placeholder">
+                                <span>{{ post.title|first|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="profile-post-info">
+                            <h3 class="profile-post-title">
+                                <a href="{% url 'post-detail' post.slug %}">{{ post.title }}</a>
+                            </h3>
+                            <div class="profile-post-meta">
+                                <span class="profile-post-category">{{ post.category.name }}</span>
+                                <span class="profile-post-date">{{ post.created_at|date:"M d, Y" }}</span>
+                                <span class="profile-post-comments">{{ post.number_of_comments }} comment{{ post.number_of_comments|pluralize }}</span>
+                            </div>
+                        </div>
+                        <div class="profile-post-actions">
+                            <a href="{% url 'edit-post' post.slug %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form method="POST" action="{% url 'delete-post' post.slug %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{% url 'profile' %}">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this post?');">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="profile-empty-state">
+                    <p>You haven't created any posts yet.</p>
+                    <a href="{% url 'create-post' %}" class="btn btn-sm btn-primary">Create Your First Post</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="profile-tab-content" id="comments-tab">
+            {% if comments %}
+                <div class="profile-comment-list">
+                    {% for comment in comments %}
+                    <div class="profile-comment-item">
+                        <div class="profile-comment-info">
+                            <h3 class="profile-comment-post">
+                                <a href="{% url 'post-detail' comment.post.slug %}">{{ comment.post.title }}</a>
+                            </h3>
+                            <p class="profile-comment-text">{{ comment.content|truncatewords:30 }}</p>
+                            <span class="profile-comment-date">{{ comment.created_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="profile-empty-state">
+                    <p>You haven't made any comments yet.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="profile-tab-content" id="liked-tab">
+            {% if user_liked_posts %}
+                <div class="profile-post-list">
+                    {% for post in user_liked_posts %}
+                    <div class="profile-post-item profile-liked-item">
+                        <div class="profile-post-info">
+                            <h3 class="profile-post-title">
+                                <a href="{% url 'post-detail' post.slug %}">{{ post.title }}</a>
+                            </h3>
+                            <div class="profile-post-meta">
+                                <span class="profile-post-author">By {{ post.author.username }}</span>
+                                <span class="profile-post-date">{{ post.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="profile-empty-state">
+                    <p>You haven't liked any posts yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.profile-tab');
+    const tabContents = document.querySelectorAll('.profile-tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(tc => tc.classList.remove('active'));
+
+            this.classList.add('active');
+            document.getElementById(targetTab + '-tab').classList.add('active');
+        });
+    });
+});
+</script>
 {% endblock %}
