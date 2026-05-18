@@ -33,11 +33,14 @@
                 <label for="{{ form.avatar.id_for_label }}">Avatar</label>
                 {{ form.avatar }}
                 {% if form.avatar.errors %}<p class="auth-error">{{ form.avatar.errors.0 }}</p>{% endif %}
-                {% if form.instance.avatar %}
-                    <div class="current-avatar">
+                <div class="current-avatar">
+                    {% if form.instance.avatar %}
                         <img src="{{ form.instance.avatar.url }}" alt="Current avatar">
-                    </div>
-                {% endif %}
+                    {% else %}
+                        {% load static %}
+                        <img src="{% static 'accounts/avatars/default_profile_pic.webp' %}" alt="Default avatar">
+                    {% endif %}
+                </div>
             </div>
 
             <button type="submit" class="auth-submit">Save Changes</button>

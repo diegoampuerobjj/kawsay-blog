@@ -19,12 +19,11 @@
     <div class="stats">
         <div class="profile-layout">
             <div class="profile-avatar-col">
+                {% load static %}
                 {% if profile.avatar %}
                     <img src="{{ profile.avatar.url }}" alt="{{ profile.display_name }}" class="profile-avatar">
                 {% else %}
-                    <div class="profile-avatar-placeholder">
-                        {{ profile.display_name|default:profile.user.username|first|upper }}
-                    </div>
+                    <img src="{% static 'accounts/avatars/default_profile_pic.webp' %}" alt="Default Avatar" class="profile-avatar">
                 {% endif %}
             </div>
 
