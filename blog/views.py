@@ -1,3 +1,4 @@
+import mistune
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse, reverse_lazy
@@ -84,6 +85,7 @@ class PostDetailView(FormMixin, DetailView):
             if self.request.user.is_authenticated else False
         )
         context["likes_count"] = self.object.likes.count()
+        context["rendered_content"] = mistune.html(context["post"].content)
         return context
     
     def post(self, request, *args, **kwargs):

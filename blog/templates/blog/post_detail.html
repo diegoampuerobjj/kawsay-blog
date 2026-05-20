@@ -21,7 +21,7 @@
       </div>
       {% if user.is_authenticated and user == post.author %}
         <div class="post-detail-actions">
-          <a href="{% url 'edit-post' post.slug %}" class="btn btn-sm btn-outline-primary">
+          <a href="{% url 'editor:edit' post.slug %}" class="btn btn-sm btn-outline-primary">
             Edit
           </a>
           <form method="POST" action="{% url 'delete-post' post.slug %}" style="display: inline;">
@@ -50,7 +50,7 @@
   {% endif %}
 
   <section class="post-detail-content">
-    {{ post.content|safe }}
+    {{ rendered_content|safe }}
   </section>
 
   <!-- Likes Section -->

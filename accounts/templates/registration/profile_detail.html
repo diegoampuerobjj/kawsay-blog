@@ -79,7 +79,7 @@
                             </div>
                         </div>
                         <div class="profile-post-actions">
-                            <a href="{% url 'edit-post' post.slug %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <a href="{% url 'editor:edit' post.slug %}" class="btn btn-sm btn-outline-primary">Edit</a>
                             <form method="POST" action="{% url 'delete-post' post.slug %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="next" value="{% url 'profile' %}">
@@ -92,7 +92,7 @@
             {% else %}
                 <div class="profile-empty-state">
                     <p>You haven't created any posts yet.</p>
-                    <a href="{% url 'create-post' %}" class="btn btn-sm btn-primary">Create Your First Post</a>
+                    <a href="{% url 'editor:create' %}" class="btn btn-sm btn-primary">Create Your First Post</a>
                 </div>
             {% endif %}
         </div>

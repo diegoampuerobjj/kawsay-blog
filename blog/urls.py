@@ -14,9 +14,7 @@ Sin .as_view(), pasarías la clase misma y Django no sabría cómo instanciarla.
 urlpatterns = [
     path('', views.BlogHomeView.as_view(), name='blog_home'),
     # Post CRUD operations
-    path('posts/create/', views.PostCreateView.as_view(), name='create-post'),
     path('posts/<slug:slug>/', views.PostDetailView.as_view(), name='post-detail'),
-    path('posts/<slug:slug>/edit/', views.PostUpdateView.as_view(), name='edit-post'),
     path('posts/<slug:slug>/delete/', views.PostDeleteView.as_view(), name='delete-post'),
     path('posts/<slug:slug>/like/', views.ToggleLikeView.as_view(), name='toggle-like'),
 

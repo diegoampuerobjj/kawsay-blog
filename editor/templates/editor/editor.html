@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {% if object %}Edit Post{% else %}New Post{% endif %} - Kawsay
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-10 offset-md-1">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{% if object %}Edit Post{% else %}Create New Post{% endif %}</h2>
+        <div>
+          {% if object %}
+            <a href="{% url 'editor:version-history' object.slug %}" class="btn btn-outline-secondary btn-sm">Version History</a>
+            <a href="{% url 'editor:preview' object.slug %}" class="btn btn-outline-secondary btn-sm" target="_blank">Preview</a>
+            <form method="POST" action="{% url 'editor:publish' object.slug %}" style="display:inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success btn-sm">{% if object.published_at %}Publish{% else %}Publish{% endif %}</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" id="post-form" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-group mb-3">
+          <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <div class="invalid-feedback d-block">{{ form.title.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="form-group">
+              <div class="field-header d-flex justify-content-between align-items-center">
+                <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'create-category' %}?next={{ request.path }}">+ Add category</a>
+              </div>
+              {{ form.category }}
+              {% if form.category.errors %}
+                <div class="invalid-feedback d-block">{{ form.category.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="{{ form.published_at.id_for_label }}">{{ form.published_at.label }}</label>
+              {{ form.published_at }}
+              {% if form.published_at.errors %}
+                <div class="invalid-feedback d-block">{{ form.published_at.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="{{ form.excerpt.id_for_label }}">{{ form.excerpt.label }}</label>
+          {{ form.excerpt }}
+          {% if form.excerpt.errors %}
+            <div class="invalid-feedback d-block">{{ form.excerpt.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
+          {{ form.content }}
+          {% if form.content.errors %}
+            <div class="invalid-feedback d-block">{{ form.content.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="{{ form.featured_image.id_for_label }}">{{ form.featured_image.label }}</label>
+              {{ form.featured_image }}
+              {% if form.featured_image.errors %}
+                <div class="invalid-feedback d-block">{{ form.featured_image.errors }}</div>
+              {% endif %}
+              {% if object and object.featured_image %}
+                <div class="mt-2">
+                  <img src="{{ object.featured_image.url }}" alt="Current" style="max-width: 150px;">
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <div class="field-header d-flex justify-content-between align-items-center">
+                <label for="{{ form.tags.id_for_label }}">{{ form.tags.label }}</label>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'create-tag' %}?next={{ request.path }}">+ Add tag</a>
+              </div>
+              {{ form.tags }}
+              {% if form.tags.errors %}
+                <div class="invalid-feedback d-block">{{ form.tags.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mb-5">
+          <button type="submit" class="btn btn-primary">
+            {% if object %}Update Post{% else %}Create Post{% endif %}
+          </button>
+          <a href="{% if object %}{% url 'post-detail' object.slug %}{% else %}{% url 'blog_home' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+<script>
+  const easyMDE = new EasyMDE({
+    element: document.getElementById('{{ form.content.id_for_label }}'),
+    spellChecker: false,
+    autosave: { enabled: false },
+    toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
+  });
+
+  document.getElementById('post-form').addEventListener('submit', function() {
+    document.getElementById('{{ form.content.id_for_label }}').value = easyMDE.value();
+  });
+
+  {% if object %}
+  const slug = '{{ object.slug }}';
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  setInterval(function() {
+    fetch('/editor/posts/' + slug + '/autosave/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify({
+        content: easyMDE.value(),
+        excerpt: document.getElementById('{{ form.excerpt.id_for_label }}').value,
+      }),
+    });
+  }, 30000);
+  {% endif %}
+</script>
+{% endblock %}

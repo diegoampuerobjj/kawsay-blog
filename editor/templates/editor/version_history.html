@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Version History: {{ post.title }} - Kawsay{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-10 offset-md-1">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Version History: {{ post.title }}</h2>
+        <a href="{% url 'editor:edit' post.slug %}" class="btn btn-outline-primary">Back to Editor</a>
+      </div>
+
+      {% if versions %}
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Version</th>
+                <th>Date</th>
+                <th>Excerpt</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for version in versions %}
+                <tr>
+                  <td>v{{ version.version_number }}</td>
+                  <td>{{ version.created_at|date:"M d, Y H:i" }}</td>
+                  <td>{{ version.excerpt|truncatewords:20 }}</td>
+                  <td>
+                    <form method="POST" action="{% url 'editor:restore-version' post.slug version.version_number %}" style="display:inline">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('Restore v{{ version.version_number }}? This will create a new version.')">
+                        Restore
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-info">No versions found for this post.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
