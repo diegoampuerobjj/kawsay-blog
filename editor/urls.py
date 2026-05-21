@@ -8,9 +8,6 @@ urlpatterns = [
     path('posts/create/', views.EditorCreateView.as_view(), name='create'),
     path('posts/<slug:slug>/edit/', views.EditorUpdateView.as_view(), name='edit'),
 
-    # Autosave (JSON)
-    path('posts/<slug:slug>/autosave/', views.AutosaveView.as_view(), name='autosave'),
-
     # Publish/Unpublish
     path('posts/<slug:slug>/publish/', views.PublishView.as_view(), name='publish'),
 

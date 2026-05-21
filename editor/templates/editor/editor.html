@@ -126,31 +126,11 @@
   const easyMDE = new EasyMDE({
     element: document.getElementById('{{ form.content.id_for_label }}'),
     spellChecker: false,
-    autosave: { enabled: false },
     toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', 'guide'],
   });
 
   document.getElementById('post-form').addEventListener('submit', function() {
     document.getElementById('{{ form.content.id_for_label }}').value = easyMDE.value();
   });
-
-  {% if object %}
-  const slug = '{{ object.slug }}';
-  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-  setInterval(function() {
-    fetch('/editor/posts/' + slug + '/autosave/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken,
-      },
-      body: JSON.stringify({
-        content: easyMDE.value(),
-        excerpt: document.getElementById('{{ form.excerpt.id_for_label }}').value,
-      }),
-    });
-  }, 30000);
-  {% endif %}
 </script>
 {% endblock %}
